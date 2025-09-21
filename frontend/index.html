@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Krishi Sakhi - കൃഷി സഖി</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root {
+    --primary: #4CAF50; /* Green */
+    --secondary: #6a1b9a; /* Purple */
+    --bg: #ffffff; /* White */
+    --text: #000000; /* Black */
+  }
+  body { font-family: Arial, sans-serif; margin:0; padding:0; background: var(--bg); color: var(--text); }
+  .container { max-width: 720px; margin:0 auto; padding:20px; }
+  .page { display:none; }
+  .active { display:block; }
+  h1,h2,h3 { color: var(--primary); }
+  button { background: var(--primary); color: var(--bg); border:none; padding:10px 20px; border-radius:5px; cursor:pointer; margin-top:10px; }
+  input, select { padding:10px; margin:6px 0; width:100%; border-radius:5px; border:1px solid #ccc; }
+  #chatBox { border:1px solid #ccc; padding:10px; height:300px; overflow:auto; background:#f4f4f4; border-radius:8px; }
+  .msg { margin:6px 0; }
+  .user { color: var(--secondary); }
+  .bot { color: var(--primary); }
+</style>
+</head>
+<body>
+<div class="container">
+
+<!-- Welcome Page -->
+<div id="welcomePage" class="page active">
+  <h1>Krishi Sakhi - കൃഷി സഖി</h1>
+  <p>Welcome to Krishi Sakhi! We are here to assist you as your personal farming companion.</p>
+  <button onclick="goTo('loginPage')">Let's Get Started / ആരംഭിക്കാം</button>
+</div>
+
+<!-- Login/Sign-in Page -->
+<div id="loginPage" class="page">
+  <h2>Login / സൈൻ ഇൻ ചെയ്യുക</h2>
+  <input id="farmerName" placeholder="Name / പേര്" title="Name">
+  <input id="cropType" placeholder="Crop Type / പിടിച്ച വിളയുടെ തരം" title="Crop Type">
+  <input id="location" placeholder="Location / പ്രദേശം" title="Location">
+  <select id="secondaryLang">
+    <option value="en">English / ഇംഗ്ലീഷ്</option>
+    <option value="hi">Hindi / ഹിന്ദി</option>
+  </select>
+  <button onclick="registerFarmer()">Submit / അയയ്‌ക്കുക</button>
+</div>
+
+<!-- Chat Page -->
+<div id="chatPage" class="page">
+  <h2>Chat Bot / ചാറ്റ് ബോട്ട്</h2>
+  <div id="chatBox"></div>
+  <input id="message" placeholder="Type your question / നിങ്ങളുടെ ചോദ്യങ്ങൾ ഇവിടെ എഴുതുക" title="Type message">
+  <button onclick="sendMessage()">Send / അയയ്‌ക്കുക</button>
+</div>
+
+</div>
+
+<script>
+let currentPage = 'welcomePage';
+let farmer = {name:'', crop:'', location:'', secondaryLang:'en'};
+
+function goTo(pageId){
+  document.getElementById(currentPage).classList.remove('active');
+  document.getElementById(pageId).classList.add('active');
+  currentPage = pageId;
+}
+
+function registerFarmer(){
+  farmer.name = document.getElementById('farmerName').value.trim();
+  farmer.crop = document.getElementById('cropType').value.trim();
+  farmer.location = document.getElementById('location').value.trim();
+  farmer.secondaryLang = document.getElementById('secondaryLang').value;
+  if(!farmer.name||!farmer.crop||!farmer.location){
+    alert('Please fill all fields / എല്ലാ ഫീൽഡുകളും പൂരിപ്പിക്കുക');
+    return;
+  }
+  goTo('chatPage');
+  addChat('bot','Welcome ' + farmer.name + '! I am here to assist you with your farming. / സ്വാഗതം ' + farmer.name + '! എനിക്ക് നിങ്ങളുടെ കൃഷിയെ സഹായിക്കാൻ ഇവിടെ ഉണ്ടാകുന്നു.');
+}
+
+function addChat(who, text){
+  const chatBox = document.getElementById('chatBox');
+  const div = document.createElement('div');
+  div.className = 'msg ' + who;
+  div.innerText = text;
+  div.title = translateToSecondary(text);
+  chatBox.appendChild(div);
+  chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+function sendMessage(){
+  const msgInput = document.getElementById('message');
+  const msg = msgInput.value.trim();
+  if(!msg) return;
+  addChat('user', msg);
+  msgInput.value = '';
+  setTimeout(()=>{
+    addChat('bot','Received your question: ' + msg + ' / നിങ്ങളുടെ ചോദ്യം ലഭിച്ചു: ' + msg);
+  },500);
+}
+
+function translateToSecondary(text){
+  if(farmer.secondaryLang === 'en'){
+    return '[English] ' + text;
+  } else if(farmer.secondaryLang === 'hi'){
+    return '[Hindi] ' + text;
+  }
+  return text;
+}
+</script>
+</body>
+</html>
